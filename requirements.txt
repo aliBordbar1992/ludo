@@ -1,0 +1,5 @@
+# Core dependencies for Ludo game
+# No external dependencies required for core game logic
+
+# Optional dependencies for examples
+flask>=2.0.0  # For web_api_example.py
