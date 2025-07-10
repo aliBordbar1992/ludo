@@ -14,6 +14,13 @@ A complete implementation of the classic Ludo board game with clean separation o
 - **Home Stretch**: Final path to victory
 - **Win Conditions**: First player to get all 4 pieces home wins
 
+### AI Players
+- **Three Difficulty Levels**: Easy, Medium, and Hard AI opponents
+- **Strategic Decision Making**: AI analyzes game state and makes optimal moves
+- **Easy AI**: Random moves with basic preferences (70% chance to move pieces out of home)
+- **Medium AI**: Strategic piece prioritization, capture opportunities, safe positioning
+- **Hard AI**: Advanced tactics including opponent blocking, protective grouping, and capture prevention
+
 ### Architecture
 - **Event-Driven**: Clean event system for UI communication
 - **State Management**: Comprehensive game state tracking
@@ -25,8 +32,11 @@ A complete implementation of the classic Ludo board game with clean separation o
 
 ```
 ├── ludo_game.py      # Core game logic (main implementation)
+├── ai_player.py      # AI players with three difficulty levels
 ├── cli_example.py    # Command-line interface example
+├── ai_cli_example.py # CLI example with AI players
 ├── test_ludo.py      # Comprehensive test suite
+├── test_ai_player.py # AI player test suite
 └── README.md         # This file
 ```
 
@@ -59,6 +69,46 @@ valid_moves = game.get_valid_moves(PlayerColor.RED)
 if valid_moves:
     piece, new_position = valid_moves[0]
     game.move_piece(PlayerColor.RED, piece.piece_id)
+```
+
+### Using AI Players
+
+```python
+from ludo_game import LudoGame, PlayerColor
+from ai_player import AIGameManager, AIDifficulty
+
+# Create a new game with AI
+game = LudoGame()
+ai_manager = AIGameManager(game)
+
+# Add human player (Red)
+game.add_player(PlayerColor.RED)
+
+# Add AI players with different difficulties
+game.add_player(PlayerColor.GREEN)
+ai_manager.add_ai_player(PlayerColor.GREEN, AIDifficulty.EASY)
+
+game.add_player(PlayerColor.YELLOW)
+ai_manager.add_ai_player(PlayerColor.YELLOW, AIDifficulty.MEDIUM)
+
+game.add_player(PlayerColor.BLUE)
+ai_manager.add_ai_player(PlayerColor.BLUE, AIDifficulty.HARD)
+
+# Game loop
+while game.game_state != GameState.GAME_OVER:
+    current_player = game.current_player
+    
+    if ai_manager.is_ai_player(current_player):
+        # AI makes move automatically
+        ai_manager.make_ai_move()
+    else:
+        # Human player makes move
+        dice = game.roll_dice()
+        valid_moves = game.get_valid_moves(current_player)
+        if valid_moves:
+            # Choose a move and execute
+            piece, _ = valid_moves[0]
+            game.move_piece(current_player, piece.piece_id)
 ```
 
 ### Event System
@@ -107,10 +157,24 @@ The CLI example provides two modes:
 1. **Auto-play**: Fast automated gameplay
 2. **Manual**: Step-by-step gameplay with board display
 
+### AI CLI Example
+
+```bash
+python ai_cli_example.py
+```
+
+The AI CLI example offers multiple game modes:
+1. **Human vs 3 AI** (Easy, Medium, Hard)
+2. **Human vs 3 Hard AI** (challenging mode)
+3. **AI vs AI** (watch different difficulties compete)
+4. **Custom setup** (choose player types and difficulties)
+5. **Quick demo** (accelerated AI-only gameplay)
+
 ### Running Tests
 
 ```bash
-python test_ludo.py
+python test_ludo.py        # Core game tests
+python test_ai_player.py   # AI player tests
 ```
 
 The test suite covers:
@@ -123,6 +187,9 @@ The test suite covers:
 - Winning conditions
 - Event system
 - Game state serialization
+- AI decision making
+- Strategic behavior differences
+- AI vs AI gameplay
 
 ## Game Rules
 
